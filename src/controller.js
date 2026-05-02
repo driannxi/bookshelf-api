@@ -1,5 +1,5 @@
 import express from "express";
-import books from "./books";
+import books from "./books.js";
 import { nanoid } from "nanoid";
 
 export const addBook = (req, res, next) => {
@@ -11,15 +11,34 @@ export const addBook = (req, res, next) => {
     publisher,
     pageCount,
     readPage,
-    reading, //bolean
+    reading = false,
   } = req.body;
   const id = nanoid(16);
   const insertedAt = new Date().toISOString();
   const updatedAt = insertedAt;
-  if (pageCount === readPage) {
-    const finished = true;
-  } else {
-    const finished = false;
+  const finished = pageCount === readPage;
+
+  if (!name) {
+    return res.status(400).json({
+      status: "fail",
+      message: "Gagal menambahkan buku. Mohon isi nama buku",
+    });
+  }
+  const isMoreFinished = readPage > pageCount ? true : false;
+  if (isMoreFinished) {
+    return res.status(400).json({
+      status: "fail",
+      message:
+        "Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount",
+    });
+  }
+
+  if (finished) {
+    return res.status(201).json({
+      status: "success",
+      message: "Buku berhasil ditambahkan...",
+      data: { bookId: id },
+    });
   }
 
   const newBooks = {
@@ -38,7 +57,7 @@ export const addBook = (req, res, next) => {
   };
   books.push(newBooks);
   const isSuccess = books.filter((book) => book.id === id).length > 0;
-  
+  //   const isFinished = pageCount === readPage ? !finished : finished;
 
   if (isSuccess) {
     return res.status(201).json({
@@ -47,13 +66,8 @@ export const addBook = (req, res, next) => {
       data: { bookId: id },
     });
   }
-
-  if (!nama) {
-    return res.status(400).json({
-      status: "fail",
-      message: "Gagal menambahkan buku. Mohon isi nama buku",
-    });
-  }
-
-
+  return res.status(500).json({
+    status: "fail",
+    message: "Buku gagal ditambahkan",
+  });
 };

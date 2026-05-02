@@ -3,6 +3,6 @@ import { addBook } from "./controller.js";
 
 const router = express.Router();
 
-router.post("/", addBook);
+router.post("/books", addBook);
 
 export default router;
