@@ -33,14 +33,6 @@ export const addBook = (req, res, next) => {
     });
   }
 
-  if (finished) {
-    return res.status(201).json({
-      status: "success",
-      message: "Buku berhasil ditambahkan...",
-      data: { bookId: id },
-    });
-  }
-
   const newBooks = {
     name,
     year,
@@ -57,7 +49,6 @@ export const addBook = (req, res, next) => {
   };
   books.push(newBooks);
   const isSuccess = books.filter((book) => book.id === id).length > 0;
-  //   const isFinished = pageCount === readPage ? !finished : finished;
 
   if (isSuccess) {
     return res.status(201).json({
@@ -66,8 +57,36 @@ export const addBook = (req, res, next) => {
       data: { bookId: id },
     });
   }
-  return res.status(500).json({
-    status: "fail",
-    message: "Buku gagal ditambahkan",
+};
+
+export const getBook = (req, res) => {
+  const bookData = books.map((book) => {
+    return {
+      id: book.id,
+      name: book.name,
+      publisher: book.publisher,
+    };
+  });
+
+  return res.status(200).json({
+    status: "success",
+    data: { books: bookData },
+  });
+};
+
+export const getDetailBook = (req, res) => {
+  const { bookId } = req.params;
+  const foundBook = books.find((book) => book.id === bookId);
+
+  if (!foundBook) {
+    return res.status(404).json({
+      status: "fail",
+      message: "Buku tidak ditemukan",
+    });
+  }
+
+  return res.status(200).json({
+    status: "success",
+    data: { book: foundBook },
   });
 };
