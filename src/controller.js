@@ -11,7 +11,7 @@ export const addBook = (req, res, next) => {
     publisher,
     pageCount,
     readPage,
-    reading = false,
+    reading,
   } = req.body;
   const id = nanoid(16);
   const insertedAt = new Date().toISOString();
@@ -75,8 +75,8 @@ export const getBook = (req, res) => {
 };
 
 export const getDetailBook = (req, res) => {
-  const { bookId } = req.params;
-  const foundBook = books.find((book) => book.id === bookId);
+  const { id } = req.params;
+  const foundBook = books.find((book) => book.id === id);
 
   if (!foundBook) {
     return res.status(404).json({
