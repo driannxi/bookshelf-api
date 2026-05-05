@@ -90,3 +90,46 @@ export const getDetailBook = (req, res) => {
     data: { book: foundBook },
   });
 };
+
+export const updateBook = (req, res) => {
+  const { id } = req.params;
+  const foundBook = books.find((book) => book.id === id);
+  const {
+    name,
+    year,
+    author,
+    summary,
+    publisher,
+    pageCount,
+    readPage,
+    reading,
+  } = req.body;
+  const insertedAt = new Date().toISOString();
+  const updatedAt = insertedAt;
+  const finished = pageCount === readPage;
+
+  const updatedBook = {
+    name,
+    year,
+    author,
+    summary,
+    publisher,
+    pageCount,
+    readPage,
+    reading,
+    insertedAt,
+    updatedAt,
+    finished,
+  };
+
+  const result = foundBook.map((book) => {
+    return { ...book, ...updatedBook };
+  });
+
+  if (result) {
+    return res.status(200).json({
+      status: "success",
+      message: "Buku berhasil diperbarui",
+    });
+  }
+};
