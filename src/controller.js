@@ -107,6 +107,21 @@ export const updateBook = (req, res) => {
   const updatedAt = insertedAt;
   const finished = pageCount === readPage;
 
+  if (!name) {
+    return res.status(400).json({
+      status: "fail",
+      message: "Gagal memperbarui buku. Mohon isi nama buku",
+    });
+  }
+  const isMoreFinished = readPage > pageCount ? true : false;
+  if (isMoreFinished) {
+    return res.status(400).json({
+      status: "fail",
+      message:
+        "Gagal memperbarui buku. readPage tidak boleh lebih besar dari pageCount",
+    });
+  }
+
   const updatedBook = {
     name,
     year,
@@ -127,10 +142,14 @@ export const updateBook = (req, res) => {
     Object.assign(foundBook, updatedBook);
   }
 
-  if (foundBook) {
-    return res.status(200).json({
-      status: "success",
-      message: "Buku berhasil diperbarui",
+  if (!foundBook) {
+    return res.status(404).json({
+      status: "fail",
+      message: "Gagal memperbarui buku. Id tidak ditemukan",
     });
   }
+  return res.status(200).json({
+    status: "success",
+    message: "Buku berhasil diperbarui",
+  });
 };
