@@ -93,7 +93,6 @@ export const getDetailBook = (req, res) => {
 
 export const updateBook = (req, res) => {
   const { id } = req.params;
-  const foundBook = books.find((book) => book.id === id);
   const {
     name,
     year,
@@ -122,11 +121,13 @@ export const updateBook = (req, res) => {
     finished,
   };
 
-  const result = foundBook.map((book) => {
-    return { ...book, ...updatedBook };
-  });
+  const foundBook = books.find((book) => book.id === id);
 
-  if (result) {
+  if (foundBook) {
+    Object.assign(foundBook, updatedBook);
+  }
+
+  if (foundBook) {
     return res.status(200).json({
       status: "success",
       message: "Buku berhasil diperbarui",
